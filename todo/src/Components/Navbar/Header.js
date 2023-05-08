@@ -2,7 +2,7 @@ import React ,{useEffect} from 'react'
 import { useState } from 'react';
 import "./header.css";
 import  useStyles from "./styles"
-import {recog} from "../../api/sppechRecog"
+import decode from "jwt-decode";
 import { useDispatch } from 'react-redux';
 import { AppBar, Typography, Toolbar, Avatar, Button } from '@material-ui/core';
 import { Link, useLocation ,useHistory} from 'react-router-dom';
@@ -23,21 +23,14 @@ const Header = () => {
     }
     useEffect(()=>{
       const token =user?.token;
+     
+      if(token){
+        const decodeToken= decode(token);
+       if(decodeToken.exp *1000 < new Date().getTime()) logout();
+      }
       setUser(JSON.parse(localStorage.getItem("profile")))
         },[location]);
-        // recog.start();
-      //   recog.onresult=(e)=>{
-      // const command = e.results[0][0].transcript;
-      // if(command.includes("navigate to")|| command.includes("go to")){
-      //   if (command.includes("sign")){
-      //     history.push("/auth")
-      //   }
-      // }
       
-      //   }
-      //   recog.onend=()=>{
-      //     recog.start();
-      //   }
     return (
         <div className="header">
     

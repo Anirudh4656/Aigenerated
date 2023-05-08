@@ -20,6 +20,10 @@ export default makeStyles((theme) => ({
     fontSize: '2em',
     fontWeight: 300,
   },
+  grid:{
+    display: "flex",
+    flexWrap:'wrap',
+  },
  
   toolbar: {
     display: 'flex',

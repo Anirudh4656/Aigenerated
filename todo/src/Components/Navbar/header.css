@@ -1,15 +1,16 @@
 .header {
-  margin-top: 5px;
-  height: 90px;
-  background-color: #fff;
-  box-shadow: 0 0 10px 0 #06060666;
+ 
+    margin: 0 auto;
+    margin-top: 5px;
+    height: 63px;
+    background-color: #fff;
+    box-shadow: 0 0 10px 0 #06060666;
+    width: 94%;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 1rem;
+    display: flex;
 
-  width: 98%;
-  justify-content: space-around;
-  align-items: center;
-  margin-left: 8px;
-  margin-right: 8px;
-  border-radius: 1rem;
 }
 @media (max-width:350px){
   .header{

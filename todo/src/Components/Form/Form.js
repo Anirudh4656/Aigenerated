@@ -2,19 +2,16 @@ import React,{useEffect, useState} from 'react'
 import FileBase from "react-file-base64"
 import {useHistory,useLocation} from "react-router-dom"
 import {useSelector} from "react-redux";
-import { Container, Grow, Grid, AppBar, TextField, Button, Paper ,Dialog} from '@material-ui/core';
+import { Container, Grow, Grid, AppBar, TextField, Button, Paper ,Dialog, Typography} from '@material-ui/core';
 import useStyles from "./style"
 import DeleteIcon from "@material-ui/icons/Delete"
 import Add from "@material-ui/icons/Add"
 import Search from "@material-ui/icons/Search"
-
-
 import {createPost, updatedPost} from "../../actions/posts"
 import {useDispatch} from "react-redux";
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import ChipInput from 'material-ui-chip-input';
-
 import { getPosts,getPostsBySearch } from '../../actions/posts';
+
 function useQuery(){
   return new URLSearchParams(useLocation().search);
 }
@@ -22,44 +19,29 @@ function useQuery(){
 const Form = ({currentId , setCurrentId}) => {
   const query = useQuery();
   const  searchQuery = query.get("searchQuery");
-
   const [search, setSearch] = useState('');
   const [tags, setTags] = useState([]);
   const [openpop, setOpenpop] = useState(false);
-  
-  const {
-    transcript,
-    listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition
-  } = useSpeechRecognition();
-  const [isListening, setIsListening] = useState(false);
-  const [voice, setVoice] = useState("")
-  
-    const dispatch = useDispatch();
-    const history = useHistory();
-    const user= JSON.parse(localStorage.getItem("profile"));
-    const classes = useStyles();
-    // const post = useSelector((state)=>currentId? state.posts.posts.find((p)=>p._id===currentId):null )
-    const post = useSelector((state)=>currentId? state.posts.posts.find((p)=>p._id===currentId):null )
-    const [postData, setPostData]= useState({
-       title:"" , message:"" , tags:"", selectedFile:""
-    })
-    const[ expand , setExpand] = useState(false);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const user= JSON.parse(localStorage.getItem("profile"));
+  const classes = useStyles();
+  const post =    useSelector((state)=>currentId? state.posts.posts.find((p)=>p._id===currentId):null )
+  const [postData, setPostData]= useState({title:"" , message:"" , tags:"", selectedFile:""})
+  const[ expand , setExpand] = useState(false);
                                                         
     useEffect(()=>{
       if(post) setPostData(post);
-     
-    },[post,isListening]);
+       },[post]);
   
-    // const handleSubmit =(e)=>{
-    //   if(currentId){
-    //     dispatch(updatedPost(currentId,postData))
-    //   }else{
-    //     dispatch(createPost(postData))
-    //   }
-    //   clear()
-    // }
+ if(!user?.result?.name){
+  return(
+    <Paper className={classes.paper}>
+      <Typography variant="h6" align="center">
+        Please SignIn  to create your own memories and like other's memories. </Typography>
+    </Paper>
+  )
+ }
  
     const handleSubmit =(e)=>{
       if(currentId){
@@ -82,20 +64,14 @@ const Form = ({currentId , setCurrentId}) => {
     const backToNormal =()=>{
         setExpand(false)
     }
-    const save=()=>{
-      console.log(transcript)
-      setVoice(transcript)
-    }
-    if (!browserSupportsSpeechRecognition) {
-      return <span>Browser doesn't support speech recognition.</span>;
-    }
+    
     const popup=()=>{
       setOpenpop(!openpop)
      }
   
     const searchPost = () => {
-      setOpenpop(!openpop)
-      console.log("I am in search blog");
+       setOpenpop(!openpop);
+       console.log("I am in search blog");
       if(search.trim() || tags ){
         dispatch(getPostsBySearch({search,tags:tags.join(",")}));
         history.push(`/posts/search?searchQuery=${search || "none"}$tags=${tags.join(",")}`);
@@ -116,6 +92,7 @@ const Form = ({currentId , setCurrentId}) => {
 
   return (
     <div className="main_note"  onDoubleClick={backToNormal} >
+  
     {    expand?
             <input 
             type="text" 
@@ -134,15 +111,7 @@ const Form = ({currentId , setCurrentId}) => {
               placeholder="Tags" 
                autoComplete="off" />
                 :null }
-        {voice ? (  <textarea 
-            
-            value={voice}
-            name="message"
-             onChange={(e)=> setPostData({...postData,voice } )}
-              column="" 
-              placeholder="Write something..."
-              row={expand?3:2}
-              onClick={expandIt} />):( <textarea 
+       <textarea 
             rows="" 
             
             value={postData.message}
@@ -153,30 +122,13 @@ const Form = ({currentId , setCurrentId}) => {
               row={expand?3:2}
               onClick={expandIt}
               
-               />)}
-           
-              
-                 {/* <button onClick={() => setIsListening(prevState => !prevState)}>
-            Start/Stop
-          </button> */}
-          {/* <Button size="small" color="primary" onClick={() => setIsListening(prevState => !prevState)}>
-          {isListening ? <span>🎙️</span> : <span>🛑🎙️</span>}
-        </Button> */}
-        <div>
-      <p>Microphone: {listening ? 'on' : 'off'}</p>
-      <button onClick={SpeechRecognition.startListening}>Start</button>
-      <button onClick={SpeechRecognition.stopListening}>Stop</button>
-      <button onClick={save}>Reset</button>
-      <p>{transcript}</p>
-    </div>
-              
+               />
 
              {expand? ( <>
                 <div className={classes.fileInput}>
         <FileBase type="file"
         multiple={false}
         onDone={({base64})=>setPostData({...postData, selectedFile:base64})} />
-      
     </div>
     <div className='main_note_button-div'> 
     <button  className="main_note_button" onClick={handleSubmit}>
@@ -206,15 +158,7 @@ const Form = ({currentId , setCurrentId}) => {
             </AppBar>
                 <Button onClick={()=>setOpenpop(false)}> close</Button>
               </Dialog>
-   
-    {/* {currentId ?  <button  className="main_note_button" onClick={handleSubmit}>
-              <i class="fas fa-plus"></i>
-              </button>: null} */}
-             
-              {/* <Button size="small"   className="main_note_button" color="primary" onClick={clear}>
-                 
-                 <DeleteIcon fontSize="small" />
-             </Button> */}
+
              </>)
               :null}
           

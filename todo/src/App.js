@@ -9,32 +9,12 @@ import Home from "./Components/Home/Home"
 import Appv from './Components/Voice/Appv';
 import { useDispatch } from 'react-redux';
 import Auth from './Components/Auth/Auth';
-import alanBtn from "@alan-ai/alan-sdk-web"
-const alanKey="0e6153ba175061f49a238d5cfcdb6e3c2e956eca572e1d8b807a3e2338fdd0dc/stage"
+import Chat from "./Components/chatgpt/chat"
+
 const App=()=> {
   const user= JSON.parse(localStorage.getItem("profile"));
   const history = useHistory();
   const dispatch =useDispatch();
-  useEffect(()=>{
-    alanBtn({
-      key:alanKey,
-      onCommand:({command})=>{
-        if(command ==="test"){
-       alert("rrtyui")
-        
-        }
-        if(command ==="Logout"){
-          dispatch({type:"LOGOUT"});
-          history.push("/posts");
-        }
-        if(command ==="Login"){
-          history.push("/auth")
-          
-        }
-       
-      }
-    },[])
-  })
   
   
   return (

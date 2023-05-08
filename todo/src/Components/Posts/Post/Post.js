@@ -17,8 +17,11 @@ const Post = ({post, setCurrentId }) => {
     const classes = useStyles();
     const history = useHistory();
     const user= JSON.parse(localStorage.getItem("profile"));
+    console.log(`i am in usr ${JSON.stringify(user)}`);
     const dispatch = useDispatch();
     const {posts} = useSelector((state)=> state.posts);
+    console.log(`i am in post ${JSON.stringify(posts)}`);
+    // console.log(`i am in post  pop drill${JSON.stringify(post)}`)
     const openPost=()=>{
 
         history.push(`/posts/${post._id}`); }
@@ -38,7 +41,9 @@ const Post = ({post, setCurrentId }) => {
   return (
     <Card className={classes.card} raised elevation={6}>
     <ButtonBase className={classes.cardAction} onClick={openPost} >
-         <CardMedia className={classes.media} image={posts.selectedFile} title={post.title} ></CardMedia>
+         <CardMedia className={classes.media} src={post.selectedFile} title={post.title} >
+         {/* <img className={classes.media} src={post.selectedFile} /> */}
+         </CardMedia>
          <div className={classes.overlay}>
          {/* <Typography variant="h6">{post.creator}</Typography> */}
              <Typography variant='body2'>{moment(post.createdAt).fromNow()}</Typography>
@@ -62,12 +67,13 @@ const Post = ({post, setCurrentId }) => {
          <Button size="small" color="primary" disabled={!user?.result} onClick={() => dispatch(likePost(post._id))}>
           <Likes />
         </Button>
-             <Button size="small" color="primary" onClick={()=>dispatch(deletePost(post._id))} >
-                 
+        {(user?.result?.googleId=== post?.creator || user?.result?.id===post?.creator)&&(
+          <Button size="small" color="primary" onClick={()=>dispatch(deletePost(post._id))} > 
                  <DeleteIcon fontSize="small" />
                  Delete
-               
              </Button>
+        )}
+             
          </CardActions>
 
      </Card>
